@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.lagou.dao.PromotionAdMapper">
+
+    <resultMap id="ad_space" type="com.lagou.domain.PromotionAd">
+        <id property="id" column="id"/>
+        <result property="name" column="name"/>
+        <result property="spaceId" column="spaceId"/>
+        <result property="keyword" column="keyword"/>
+        <result property="htmlContent" column="htmlContent"/>
+        <result property="text" column="text"/>
+        <result property="link" column="link"/>
+        <result property="startTime" column="startTime"/>
+        <result property="endTime" column="endTime"/>
+        <result property="createTime" column="createTime"/>
+        <result property="updateTime" column="updateTime"/>
+        <result property="status" column="status"/>
+        <result property="priority" column="priority"/>
+        <result property="img" column="img"/>
+
+        <!--关联查询，，，property:实体类中的多方属性值，select：查询语句所在的mapper.方法名（），column：参数值-->
+        <association property="promotionSpace" javaType="com.lagou.domain.PromotionSpace"
+                     select="com.lagou.dao.PromotionSpaceMapper.findPromotionSpaceById" column="spaceId">
+        </association>
+    </resultMap>
+
+    <!--分页获取所有的广告列表-->
+    <select id="findAllAdByPage" resultMap="ad_space">
+        select * from promotion_ad
+    </select>
+
+    <!--新增加广告-->
+    <insert id="savePromotionAd" parameterType="com.lagou.domain.PromotionAd">
+        INSERT  INTO promotion_ad (id,name,spaceId,keyword,htmlContent,text,link,startTime,endTime,createTime,updateTime,status,priority,img)
+        VALUES(NULL,#{name},#{spaceId},#{keyword},#{htmlContent},#{text},#{link},#{startTime},#{endTime},#{createTime},#{updateTime},#{status},#{priority},#{img});
+    </insert>
+
+    <!--更新广告-->
+    <update id="updatePromotionAd" parameterType="com.lagou.domain.PromotionAd">
+        UPDATE course
+        <trim prefix="SET" suffixOverrides=",">
+            <if test="id != null and id != ''">
+                id = #{id},
+            </if>
+
+            <if test="name != null and name != ''">
+                name=#{name},
+            </if>
+
+            <if test="spaceId != null and spaceId != ''">
+                spaceId=#{spaceId},
+            </if>
+
+            <if test="keyword != null and keyword != ''">
+                keyword=#{keyword},
+            </if>
+
+            <if test="htmlContent != null and htmlContent != ''">
+                htmlContent=#{htmlContent},
+            </if>
+
+            <if test="text != null and text != ''">
+                text=#{text},
+            </if>
+
+            <if test="link != null and link != ''">
+                link=#{link},
+            </if>
+
+            <if test="startTime != null and startTime != ''">
+                startTime=#{startTime},
+            </if>
+
+            <if test="endTime != null and endTime != ''">
+                endTime=#{endTime},
+            </if>
+
+            <if test="createTime != null and createTime != ''">
+                createTime=#{createTime},
+            </if>
+
+            <if test="updateTime != null and updateTime != ''">
+                updateTime=#{updateTime},
+            </if>
+
+            <if test="status != null and status != ''  or status == 0">
+                status=#{status},
+            </if>
+
+            <if test="priority != null and priority != ''">
+                priority=#{priority},
+            </if>
+
+            <if test="img != null and img != ''">
+                img=#{img},
+            </if>
+
+        </trim>
+
+        <where>
+            <if test="id!=null and id != '' ">id=#{id}</if>
+        </where>
+    </update>
+    <update id="updatePromotionAdStatus" parameterType="com.lagou.domain.PromotionAd">
+        UPDATE promotion_ad SET STATUS = #{status} ,updatetime = #{updateTime} WHERE id = #{id}
+    </update>
+</mapper>

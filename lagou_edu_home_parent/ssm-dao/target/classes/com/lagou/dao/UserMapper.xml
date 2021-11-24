@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!--/**
+* 多条件分页查询
+* */-->
+<mapper namespace="com.lagou.dao.UserMapper">
+    <select id="findAllUserByPage" parameterType="com.lagou.domain.UserVo" resultType="com.lagou.domain.User">
+        select * from user
+        <where>
+            <if test="true">
+                and is_del != 1
+            </if>
+            <if test="username != null">
+                and name = #{username}
+            </if>
+            <if test="startCreateTime != null and endCreateTime != null">
+                and create_Time between #{startCreateTime} and #{endCreateTime}
+            </if>
+        </where>
+    </select>
+
+    <!--用户登录-->
+    <select id="login" parameterType="com.lagou.domain.User" resultType="com.lagou.domain.User">
+        select * from user
+        where phone = #{phone}
+    </select>
+
+    <!--根据id查询用户当前的角色-->
+    <select id="findUserRelationRoleById" resultType="com.lagou.domain.Role" parameterType="int">
+        select * from roles r inner join user_role_relation ur on r.id = ur.role_id
+        where ur.user_id = #{userid}
+    </select>
+
+    <!--分配角色之前先删除关系表的关联关系-->
+    <delete id="deleteUserContextRole" parameterType="int">
+        delete from user_role_relation where user_id = #{userId}
+    </delete>
+
+    <!--分配角色-->
+    <insert id="userContextRole" parameterType="com.lagou.domain.User_Role_relation">
+        insert into user_role_relation
+        values(null,#{userId},#{roleId},#{createdTime},#{updatedTime},#{createdBy},#{updatedby})
+    </insert>
+
+</mapper>
